@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require('cors');
-const { Telegraf } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 require("dotenv").config();
 const app = express();
 app.use(cors({
@@ -34,7 +34,13 @@ app.post("/submit-form", async function (req, res) {
 
     await bot.telegram.sendMessage(
       process.env.CHAT_ID,
-      `Новая заявка:\nКомпания: ${company}\nИмя: ${contact}\nТелефон: ${phone}\nEmail: ${email}`
+      `📝 *Новая заявка*\n\n🏢 **Компания:** ${company}\n👤 **Контакт:** ${contact}\n📱 **Телефон:** ${phone}\n📧 **Email:** ${email}\n\nДата подачи: ${new Date().toLocaleString()}`,
+      {
+        parse_mode: 'Markdown',
+        ...Markup.inlineKeyboard([
+          Markup.button.url('🌐 Сайт компании', 'https://bleskoff.ru')
+        ])
+      }
     );
 
     res.status(200).json({ success: true });
